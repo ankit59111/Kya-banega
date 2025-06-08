@@ -1,0 +1,20 @@
+{
+  "name": "annapurna",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "web",
+    "backend"
+  ],
+  "scripts": {
+    "install:all": "npm install && npm run install:web && npm run install:backend",
+    "install:web": "cd web && npm install",
+    "install:backend": "cd backend && npm install",
+    "start:web": "cd web && npm start",
+    "start:backend": "cd backend && npm run dev",
+    "dev": "concurrently \"npm run start:backend\" \"npm run start:web\""
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+} 
