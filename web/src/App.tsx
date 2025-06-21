@@ -1,38 +1,26 @@
 import React from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
-import { Box } from '@chakra-ui/react';
-import Navbar from './components/Navbar';
-import Home from './pages/Home';
-import MealPlan from './pages/MealPlan';
-import Login from './pages/Login';
-import Register from './pages/Register';
-import { useSelector } from 'react-redux';
-import { RootState } from './store';
+import { BrowserRouter } from 'react-router-dom';
+import { Provider } from 'react-redux';
+import { ChakraProvider, ColorModeScript } from '@chakra-ui/react';
+import { store } from './store';
+import theme from './theme';
+import AppRoutes from './routes';
+import Navbar from './components/layout/Navbar';
+import AuthInitializer from './components/auth/AuthInitializer';
 
 const App: React.FC = () => {
-  const { token } = useSelector((state: RootState) => state.auth);
-
   return (
-    <Box minH="100vh">
-      <Navbar />
-      <Box as="main" p={4}>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route
-            path="/meal-plan"
-            element={token ? <MealPlan /> : <Navigate to="/login" />}
-          />
-          <Route
-            path="/login"
-            element={!token ? <Login /> : <Navigate to="/meal-plan" />}
-          />
-          <Route
-            path="/register"
-            element={!token ? <Register /> : <Navigate to="/meal-plan" />}
-          />
-        </Routes>
-      </Box>
-    </Box>
+    <Provider store={store}>
+      <ChakraProvider theme={theme}>
+        <ColorModeScript initialColorMode={theme.config.initialColorMode} />
+        <BrowserRouter>
+          <AuthInitializer>
+            <Navbar />
+            <AppRoutes />
+          </AuthInitializer>
+        </BrowserRouter>
+      </ChakraProvider>
+    </Provider>
   );
 };
 

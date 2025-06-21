@@ -1,11 +1,15 @@
 import { configureStore } from '@reduxjs/toolkit';
-import mealPlanReducer from './slices/mealPlanSlice';
 import authReducer from './slices/authSlice';
+import mealPlanReducer from './slices/mealPlanSlice';
+import surpriseMeReducer from './slices/surpriseMeSlice';
+import preferencesReducer from './slices/preferencesSlice';
 
 export const store = configureStore({
   reducer: {
-    mealPlan: mealPlanReducer,
     auth: authReducer,
+    mealPlan: mealPlanReducer,
+    surpriseMe: surpriseMeReducer,
+    preferences: preferencesReducer,
   },
 });
 

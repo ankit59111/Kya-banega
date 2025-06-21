@@ -4,6 +4,10 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
+import authRoutes from './routes/authRoutes';
+import mealRoutes from './routes/mealRoutes';
+import surpriseMeRoutes from './routes/surpriseMeRoutes';
+import adminRoutes from './routes/adminRoutes';
 
 // Load environment variables
 dotenv.config();
@@ -17,20 +21,21 @@ app.use(helmet());
 app.use(morgan('dev'));
 app.use(express.json());
 
+// Routes
+app.use('/api/auth', authRoutes);
+app.use('/api/meals', mealRoutes);
+app.use('/api/surprise-me', surpriseMeRoutes);
+app.use('/api/admin', adminRoutes);
+
 // Database connection
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/annapurna';
 
-// Only attempt to connect to MongoDB if it's required
-if (process.env.NODE_ENV !== 'development') {
-  mongoose.connect(MONGODB_URI)
-    .then(() => console.log('Connected to MongoDB'))
-    .catch((error) => {
-      console.error('MongoDB connection error:', error);
-      console.log('Continuing without MongoDB connection...');
-    });
-} else {
-  console.log('Development mode: MongoDB connection skipped');
-}
+mongoose.connect(MONGODB_URI)
+  .then(() => console.log('Connected to MongoDB'))
+  .catch((error) => {
+    console.error('MongoDB connection error:', error);
+    console.log('Continuing without MongoDB connection...');
+  });
 
 // Routes
 app.get('/', (_req: express.Request, res: express.Response) => {
@@ -42,11 +47,11 @@ app.get('/', (_req: express.Request, res: express.Response) => {
 });
 
 // Error handling middleware
-app.use((err: Error, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
+app.use((err: any, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
   console.error(err.stack);
-  res.status(500).json({ 
-    message: 'Something went wrong!',
-    error: process.env.NODE_ENV === 'development' ? err.message : undefined
+  res.status(err.statusCode || 500).json({
+    status: 'error',
+    message: err.message || 'Internal server error',
   });
 });
 
